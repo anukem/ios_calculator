@@ -20,16 +20,21 @@ class ViewController: UIViewController {
         let digit = sender.currentTitle!
         
         let textCurrentlyInDisplay = display.text!
-        
+   
        
         if userIsInTheMiddleOfTyping {
-            display.text = textCurrentlyInDisplay + digit
+            if(!display.text!.contains(".") || digit != "."){
+                display.text = textCurrentlyInDisplay + digit
+                
+            }
+            
         }
         else {
             display.text = digit
             userIsInTheMiddleOfTyping = true
         }
         
+       
     }
     
     var displayValue: Double {

@@ -8,10 +8,16 @@
 
 import Foundation
 
+func mod(divisor: Double, divider: Double) -> Double {
+    
+    return divisor.truncatingRemainder(dividingBy: divider)
+}
 
 struct CalculatorBrain {
     
     private var accumulator: Double?
+	private var resultIsPending: Bool = false
+    private var description: String = ""
     
     
     private enum Operation {
@@ -20,6 +26,8 @@ struct CalculatorBrain {
         case binaryOperation((Double, Double) -> Double)
         case equals
     }
+    
+    
     
     private var operations: Dictionary<String, Operation> = [
         "π": Operation.constant(Double.pi),
@@ -31,7 +39,10 @@ struct CalculatorBrain {
         "/": Operation.binaryOperation({$0 / $1}),
         "+": Operation.binaryOperation({$0 + $1}),
         "-": Operation.binaryOperation({$0 - $1}),
-        "=": Operation.equals
+        "=": Operation.equals,
+        "sin": Operation.unaryOperation(sin),
+        "tan": Operation.unaryOperation(tan),
+        "mod": Operation.binaryOperation(mod)
     ]
     
     mutating func performOperation(_ symbol: String) {
@@ -39,18 +50,24 @@ struct CalculatorBrain {
             switch operation {
             case .constant(let value):
                 accumulator = value
+                description += String(value)
             case .unaryOperation(let function):
                 if accumulator != nil {
                     accumulator = function(accumulator!)
+                    
                 }
             case .binaryOperation(let function):
                 if accumulator != nil {
                     pendingBinaryOperation = PendingBinaryOperation(function: function, leftOperand: accumulator!)
+                    description += symbol
                     accumulator = nil
+                    resultIsPending = true
+                    
                 }
                 break
             case .equals:
                 performPendingBinaryOperation()
+                resultIsPending = false
                 break
             }
         }
@@ -76,6 +93,7 @@ struct CalculatorBrain {
     
     mutating func setOperand(_ operand: Double) {
         accumulator = operand
+        description = String(operand)
     }
     
     var result: Double? {
