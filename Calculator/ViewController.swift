@@ -26,12 +26,15 @@ class ViewController: UIViewController {
             if(!display.text!.contains(".") || digit != "."){
                 display.text = textCurrentlyInDisplay + digit
                 
+                
             }
             
         }
         else {
             display.text = digit
             userIsInTheMiddleOfTyping = true
+            
+            
         }
         
        
@@ -53,9 +56,11 @@ class ViewController: UIViewController {
         if userIsInTheMiddleOfTyping {
             brain.setOperand(displayValue)
             userIsInTheMiddleOfTyping = false
+            
         }
         if let mathematicalSymbol = sender.currentTitle {
             brain.performOperation(mathematicalSymbol)
+            print(brain.description)
         }
         if let result = brain.result {
             displayValue = result
